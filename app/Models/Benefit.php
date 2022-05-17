@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Helpers\CommonHelper;
 use App\Helpers\ImageHelper;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasTranslations;
 
 class Benefit extends Model
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
+    use HasTranslations;
 
     const LIMIT = 100000;
 
@@ -18,7 +20,12 @@ class Benefit extends Model
     protected $table = 'benefits';
 
     protected $fillable = ['title', 'description', 'image','active','sort','alt'];
+    protected $translatable = ['title', 'description'];
 
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
 
     public function scopeSort($query,$sort)
     {

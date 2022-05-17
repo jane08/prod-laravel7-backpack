@@ -12,6 +12,7 @@ class Tag extends Model
 {
     use CrudTrait;
     use Sluggable, SluggableScopeHelpers;
+    use HasTranslations;
 
     /*
     |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ class Tag extends Model
     // protected $hidden = [];
     // protected $dates = [];
 // protected $dates = [];
+    protected $translatable = ['name'];
 
 
     /**

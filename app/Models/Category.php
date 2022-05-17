@@ -12,7 +12,7 @@ class Category extends Model
 {
     use CrudTrait;
     use Sluggable, SluggableScopeHelpers;
-
+    use HasTranslations;
     /*
     |--------------------------------------------------------------------------
     | GLOBAL VARIABLES
@@ -26,6 +26,7 @@ class Category extends Model
     protected $fillable = ['name', 'slug', 'parent_id'];
     // protected $hidden = [];
     // protected $dates = [];
+    protected $translatable = ['name'];
 
     /**
      * Return the sluggable configuration array for this model.

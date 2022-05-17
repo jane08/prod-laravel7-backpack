@@ -17,7 +17,7 @@ class CreateStaticTransTable extends Migration
             $table->id();
             $table->text('keyword');
             $table->string('page');
-            $table->text('content');
+            $table->longText('content');
             $table->timestamps();
         });
     }

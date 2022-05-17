@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 class StaticTrans extends Model
 {
     use CrudTrait;
+    use HasTranslations;
 
     protected $table = 'static_trans';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
     protected $fillable = ['content', 'keyword', 'page'];
+    protected $translatable = ['content'];
 
 
 

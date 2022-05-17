@@ -15,6 +15,7 @@ class Article extends Model
 {
     use CrudTrait;
     use Sluggable, SluggableScopeHelpers;
+    use HasTranslations;
 
     /*
     |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ class Article extends Model
     // protected $hidden = [];
     // protected $dates = [];
 
+    protected $translatable = ['title', 'content','source'];
 
     protected $casts = [
         'featured'  => 'boolean',

@@ -33,6 +33,7 @@ class MenuItem extends Model
     const PAGE_CHANGE_TARIFF = 'change_tariff';
     const PAGE_CONTACT = 'contact';
     const PAGE_REVIEW = 'review';
+    const PAGE_ERRORS= 'errors';
 
 
     const TERMS_OF_SERVICE_URL = "terms";
@@ -50,6 +51,7 @@ class MenuItem extends Model
         self::PAGE_CHANGE_TARIFF => 'Change Tariff',
         self::PAGE_CONTACT => 'Contact',
         self::PAGE_REVIEW => 'Review',
+        self::PAGE_ERRORS => 'Errors',
 
     ];
 

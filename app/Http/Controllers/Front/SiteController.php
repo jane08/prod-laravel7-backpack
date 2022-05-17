@@ -21,10 +21,13 @@ use App\Http\Services\BenefitService;
 use App\Http\Services\CourseService;
 use App\Http\Services\GalleryService;
 use App\Http\Services\MenuItemService;
+use App\Http\Services\NewsService;
 use App\Http\Services\PartnerService;
 use App\Http\Services\ReviewService;
 use App\Http\Services\RoleService;
 use App\Http\Services\UserService;
+use App\Models\Article;
+use App\Models\Benefit;
 use App\Models\Contact;
 use App\Models\Course;
 use App\Models\Gallery;
@@ -50,10 +53,27 @@ class SiteController extends Controller
 
     public function index()
     {
+        $benefits = BenefitService::getAll(Benefit::OLDEST);
+
+      /*  $article = NewsService::getOne(1);
+        $categories = $article->categories;
+        foreach($categories as $category){
+            echo $category->name;
+            die;
+        }*/
 
 
         return view('site.index',[
+            'benefits'=>$benefits
+        ]);
+    }
 
+    public function benefits()
+    {
+        $benefits = BenefitService::getAll(Benefit::OLDEST);
+
+        return view('site.benefits',[
+            'benefits'=>$benefits
         ]);
     }
 

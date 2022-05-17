@@ -25,6 +25,7 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Front',
 ], function () { // custom admin routes
     Route::get('/', [SiteController::class, 'index'])->name("main");
+    Route::get('/benefits', [SiteController::class, 'benefits'])->name("benefits");
     Route::get('contact', [SiteController::class, 'contact'])->name("contact");
     Route::get('sitemap', [SitemapController::class, 'sitemap'])->name("sitemap");
     Route::post('send-feedback', [SiteController::class, 'sendFeedback'])->name("send-feedback");

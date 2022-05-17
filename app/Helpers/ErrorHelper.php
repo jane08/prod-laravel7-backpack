@@ -23,7 +23,7 @@ class ErrorHelper
             $arr = [
                 'data' => [
                     'error' => '404',
-                    'error_text' => 'Страница не найдена',
+                    'error_text' => \App\Models\StaticTrans::t("errors_page_not_found","Page not found",\App\Models\MenuItem::PAGE_ERRORS),
                 ]
             ];
             return response()->json($arr);
@@ -36,7 +36,7 @@ class ErrorHelper
         $arr = [
             'data' => [
                 'error' => '401',
-                'error_text' => 'Введите email и пароль',
+                'error_text' =>\App\Models\StaticTrans::t("errors_enter_email_password","Enter your email and password",\App\Models\MenuItem::PAGE_ERRORS),
             ]
         ];
         return response()->json($arr);
@@ -49,7 +49,7 @@ class ErrorHelper
         $arr = [
             'data' => [
                 'error' => '405',
-                'error_text' => 'Авторизируйтесь, пожалуйста',
+                'error_text' => \App\Models\StaticTrans::t("errors_login_please","Login please",\App\Models\MenuItem::PAGE_ERRORS),
             ]
         ];
         return response()->json($arr);
