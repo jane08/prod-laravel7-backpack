@@ -77,8 +77,9 @@ class SiteController extends Controller
         ]);
     }
 
-    public function page($slug)
+    public function page(Request $request,$lang,$slug)
     {
+
         $page = Page::findBySlug($slug);
 
         if (!$page)

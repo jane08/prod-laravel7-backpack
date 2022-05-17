@@ -19,7 +19,8 @@ class Lang
      */
     public function handle(Request $request, Closure $next)
     {
-        App::setLocale($request->lang??'ru_RU');
+
+        App::setLocale($request->lang??'ru');
         return $next($request);
     }
 }

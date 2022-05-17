@@ -16,7 +16,7 @@
                 <h1>{{ \App\Models\StaticTrans::t("404_h1","404 Error Page",\App\Models\MenuItem::PAGE_404) }}</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{url("/")}}">{{ \App\Models\StaticTrans::t("404_breadcrumb1","Home",\App\Models\MenuItem::PAGE_404) }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main',['lang'=>Illuminate\Support\Facades\App::getLocale()])}}}}">{{ \App\Models\StaticTrans::t("404_breadcrumb1","Home",\App\Models\MenuItem::PAGE_404) }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ \App\Models\StaticTrans::t("404_breadcrumb2","404 Error Page",\App\Models\MenuItem::PAGE_404) }}</li>
                     </ol>
                 </nav>
@@ -33,7 +33,7 @@
                 </div>
                 <h2>{{ \App\Models\StaticTrans::t("404_title","Error 404: Page not found",\App\Models\MenuItem::PAGE_404) }}</h2>
                 <p>{{ \App\Models\StaticTrans::t("404_desc","The page you were looking for could not be found.",\App\Models\MenuItem::PAGE_404) }}</p>
-                <a href="{{url("/")}}" class="btn main-btn-2 btn-fourthcolor">{{ \App\Models\StaticTrans::t("404_button","GO TO HOMEPAGE",\App\Models\MenuItem::PAGE_404) }} <i class="mainicon-edit"></i></a>
+                <a href="{{route('main',['lang'=>Illuminate\Support\Facades\App::getLocale()])}}}}" class="btn main-btn-2 btn-fourthcolor">{{ \App\Models\StaticTrans::t("404_button","GO TO HOMEPAGE",\App\Models\MenuItem::PAGE_404) }} <i class="mainicon-edit"></i></a>
             </div>
         </div>
     </section>

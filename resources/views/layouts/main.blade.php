@@ -41,7 +41,13 @@
                 <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
                 <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{route('benefits')}}">Benefits</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{route('benefits',['lang'=>Illuminate\Support\Facades\App::getLocale()])}}">Benefits</a></li>
+                <li class="nav-item">
+                    <a href="{{ route(Route::currentRouteName(), 'en') }}" class="nav-link">EN</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route(Route::currentRouteName(), 'ru') }}" class="nav-link">RU</a>
+                </li>
             </ul>
         </div>
     </div>

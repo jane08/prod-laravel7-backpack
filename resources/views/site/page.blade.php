@@ -17,7 +17,7 @@
                 <h1>{{ $page->title }}</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{url("/")}}">{{ \App\Models\StaticTrans::t("404_breadcrumb1","Home",\App\Models\MenuItem::PAGE_404) }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main',['lang'=>Illuminate\Support\Facades\App::getLocale()])}}">{{ \App\Models\StaticTrans::t("404_breadcrumb1","Home",\App\Models\MenuItem::PAGE_404) }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $page->title }}</li>
                     </ol>
                 </nav>
