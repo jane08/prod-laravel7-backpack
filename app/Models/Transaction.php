@@ -19,6 +19,7 @@ class Transaction extends Model
     const TYPE_TARIFF="tariff";
     const TYPE_SCORE="score";
     const TYPE_COURSE="course";
+    const TYPE_PRODUCT="product";
 
     const PAY_TYPE_CURRENCY = "currency";
     const PAY_TYPE_CRYPTO = "crypto";
@@ -27,7 +28,7 @@ class Transaction extends Model
     const CODE_CANT_EXTEND = 2;
     const CODE_CANT_BUY = 3;
 
-    protected $fillable = ["start_date","end_date","status","course_id","user_id","tariff_id","tariff_type","message",'sum'];
+    protected $fillable = ["start_date","end_date","status","user_id","tariff_id","tariff_type","message",'sum','qty'];
 
     public static $statuses =[
         self::PENDING => 'PENDING',
@@ -51,83 +52,38 @@ class Transaction extends Model
     }
 
 
-    public static function saveTransaction($userId,$courseId,$tariffType,$status,$tariffId=null,$type=self::TYPE_COURSE,$payType=Transaction::STRIPE,$message="",$sum=0)
+    public static function saveTransaction($userId,$status,$request,$product=null,$payType=Transaction::STRIPE,$type=self::TYPE_PRODUCT,$cart=null,$sum=0,$qty=0,$tariffId=null)
     {
         $transaction=null;
-           $tariff = TariffService::getOne($tariffId);
-
-               $transaction = Transaction::where(['user_id' => $userId,"course_id"=>$courseId])->orderEndDateDesc()->activeDates()->paid()->first();
-               $course = CourseService::getOne($courseId);
-               if (empty($transaction)) {
-
-                   $startDate = Carbon::now()->toDateTimeString();
-                   $endDate = Carbon::now()->addHours($course->access_hours)->toDateTimeString();
-
-               } else {
-                   $date = new Carbon($transaction->end_date);
-                   $startDate = $date->toDateTimeString();
-
-                   $endDate = $date->addHours($course->access_hours)->toDateTimeString();
-               }
 
         $transaction = new Transaction();
                $transaction->user_id = $userId;
-               $transaction->course_id = $courseId;
-               $transaction->start_date = $startDate;
-               $transaction->end_date = $endDate;
+               $transaction->qty = $qty;
+               $transaction->start_date = null;
+               $transaction->end_date = null;
                $transaction->user_id = $userId;
                $transaction->tariff_id = $tariffId;
-               $transaction->sum = $tariff->price;
+               $transaction->sum =  $product->price??$sum;
                $transaction->status = $status;
                $transaction->type = $type;
                $transaction->pay_type = $payType;
-               $transaction->tariff_type = $tariffType;
-               $transaction->message = $message;
+               $transaction->tariff_type = null;
+               $transaction->message = $request->message??'';
                $transaction->save();
+
+               if(!empty($transaction))
+               {
+                    $transactionDetail = new TransactionDetail();
+                    $transactionDetail->transaction_id = $transaction->id;
+                    $transactionDetail->product_id = $product->id;
+                    $transactionDetail->price = $product->price;
+                    $transactionDetail->sum = $product->price;
+                    $transactionDetail->qty = CommonHelper::ONE;
+                   $transactionDetail->save();
+               }
 
         return $transaction;
     }
-
-    /**
-     * Can not extend if course was not bought. Can only extend if the course was bought
-     * @param $userId
-     * @param $courseId
-     *
-     */
-    public static function canBuy($userId,$courseId,$tariffType)
-    {
-        $respond=[];
-        $respond["code"] = CommonHelper::ONE;
-        $respond["status"] = false;
-        $transaction = Transaction::where(['user_id' => $userId,"course_id"=>$courseId])->orderEndDateDesc()->paid()->first();
-
-        if(empty($transaction))
-        {
-            if($tariffType==Tariff::EXTEND)
-            {
-                $respond["status"] = false;
-                $respond["code"] = self::CODE_CANT_EXTEND;
-                return $respond;
-            }
-            $respond["status"] = true;
-            return $respond;
-        }
-        else {
-            if ($transaction->tariff_type == Tariff::EXTEND) {
-                $respond["status"] = true;
-
-                return $respond;
-            }
-            $respond["status"] = false;
-            $respond["code"] = self::CODE_CANT_BUY;
-
-            return $respond;
-        }
-
-        return $respond;
-
-    }
-
 
     /*
    |--------------------------------------------------------------------------

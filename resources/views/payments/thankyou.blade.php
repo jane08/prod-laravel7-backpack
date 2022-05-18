@@ -14,29 +14,20 @@
                     <div class="checkout_page-form">
                         <div class="checkout_page-thanks">
                             <p>{{ \App\Models\StaticTrans::t("thankyou_desc","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",\App\Models\MenuItem::PAGE_THANKYOU) }}</p>
-                            <a href="{{route("profile")}}" class="btn main-btn-2 btn-fourthcolor">{{ \App\Models\StaticTrans::t("thankyou_to_profile","GO TO PROFILE",\App\Models\MenuItem::PAGE_THANKYOU) }}<i class="mainicon-edit"></i></a>
+                            <a href="" class="btn main-btn-2 btn-fourthcolor">{{ \App\Models\StaticTrans::t("thankyou_to_profile","GO TO PROFILE",\App\Models\MenuItem::PAGE_THANKYOU) }}<i class="mainicon-edit"></i></a>
                         </div>
                     </div>
                     <div class="checkout_result checkout_page-result">
                         <div class="checkout_result__block">
                             <div class="checkout_result__block-img">
-                                <img src="{{asset($course->image)}}" alt="{{$course->alt}}">
+                                <img width="200" height="200" src="{{asset($product->image)}}" alt="{{$product->alt}}">
                             </div>
                             <div class="checkout_result__block-content">
-                                <p class="checkout_result__block-title">{{$course->title}}</p>
-                                <p class="checkout_result__block-price">${{$tariff->price??''}}</p>
+                                <p class="checkout_result__block-title">{{$product->title}}</p>
+                                <p class="checkout_result__block-price">${{$product->price??''}}</p>
                             </div>
                         </div>
-                        <div class="checkout_result__info">
-                            <div class="checkout_result__info-item">
-                                <p class="checkout_result__info-name">Rate:</p>
-                                <p class="checkout_result__info-data">{{$tariff->title??''}}</p>
-                            </div>
-                            <div class="checkout_result__info-item">
-                                <p class="checkout_result__info-name">Total:</p>
-                                <p class="checkout_result__info-data">${{$tariff->price??''}}</p>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>

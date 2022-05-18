@@ -10,6 +10,8 @@ class Role extends Model
 {
 
     const ROLE_STUDENT = "student";
+    const ROLE_CLIENT = "client";
+    const ROLE_ADMIN = "admin";
     const MODEL_TYPE = "App\Models\User";
 
     protected $table = 'roles';

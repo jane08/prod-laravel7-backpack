@@ -10,6 +10,7 @@ use App\Models\StaticTrans;
 use App\Models\User;
 use Backpack\PermissionManager\app\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -49,6 +50,29 @@ class UserService
            $users = User::whereIn("id",$usersRoles)->get()->pluck('name', 'id')->toArray();
        }
         return $users;
+    }
+
+    public static function createUser($request)
+    {
+        $user = User::forceCreate([
+            'name' => $request['first_name'] . " " . $request['last_name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['email']),
+            'api_token' => null,
+            'phone' => $request['phone'] ?? '',
+            'active' => CommonHelper::ONE,
+        ]);
+        if (!empty($user)) {
+            $profile = Profile::forceCreate([
+                'first_name' => $request['first_name'],
+                'last_name' => $request['last_name'],
+                'instagram' => $request['instagram'] ?? '',
+                'address' => $request['address'] ?? '',
+                // 'ip' => $request['ip'],
+                'user_id' => $user->id,
+            ]);
+        }
+        return $user;
     }
 
 }

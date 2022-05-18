@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Classes\Payments\Payment;
+use App\Classes\Payments\Stripe;
 use App\Helpers\CommonHelper;
 use App\Helpers\EmailHelper;
 use App\Http\Controllers\Controller;
@@ -21,6 +23,7 @@ use App\Http\Services\LevelService;
 use App\Http\Services\MailchimpService;
 use App\Http\Services\MenuItemService;
 use App\Http\Services\PartnerService;
+use App\Http\Services\ProductService;
 use App\Http\Services\ReviewService;
 use App\Http\Services\TariffService;
 use App\Http\Services\UserService;
@@ -46,21 +49,14 @@ class PaymentController extends Controller
     {
         $clientSecret = "";
         $disabled = "";
-        if (!empty($request->course_id) && $request->tariff_id) {
-            $course = CourseService::getOne($request->course_id);
-            $tariff = TariffService::getOne($request->tariff_id);
+        if (!empty($request->product_id)) {
+            $product = ProductService::getOne($request->product_id);
 
-            if(empty($course) || empty($tariff))
+            if(empty($product) )
             {
                 return response()->view('errors.404', [], 404);
             }
 
-           $courseHasTariff = Tariff::courseHasTariff($course->id,$tariff->id,$request->type??'');
-
-            if(empty($courseHasTariff))
-            {
-                return response()->view('errors.404', [], 404);
-            }
 
             $dbUser = null;
             if (!empty(auth()->user()->id)) {
@@ -79,8 +75,7 @@ class PaymentController extends Controller
             }
 
             return view('payments.stripe', [
-                "course" => $course,
-                "tariff" => $tariff,
+                "product" => $product,
                 "intent" => $intent,
                 "dbUser" => $dbUser,
                 "disabled" => $disabled,
@@ -92,12 +87,7 @@ class PaymentController extends Controller
 
     public function purchase(StripeRequest $request)
     {
-        $courseHasTariff = Tariff::courseHasTariff($request->course_id??'',$request->tariff_id??'',$request->type??'');
 
-        if(empty($courseHasTariff))
-        {
-            return response()->view('errors.404', [], 404);
-        }
         if($request["subscribe"]=="on")
         {
             try {
@@ -118,107 +108,47 @@ class PaymentController extends Controller
                 ]);
             }
 
-            $user = User::forceCreate([
-                'name' => $request['first_name'] . " " . $request['last_name'],
-                'email' => $request['email'],
-                'password' => Hash::make($request['email']),
-                'api_token' => null,
-                'phone' => $request['phone'] ?? '',
-                'active' => CommonHelper::ONE,
-            ]);
+            $user = UserService::createUser($request);
             if (!empty($user)) {
-                $profile = Profile::forceCreate([
-                    'first_name' => $request['first_name'],
-                    'last_name' => $request['last_name'],
-                    'instagram' => $request['instagram'] ?? '',
-                    'address' => $request['address'] ?? '',
-                    // 'ip' => $request['ip'],
-                    'user_id' => $user->id,
-                ]);
-
-                Role::saveUserRole($user, Role::ROLE_STUDENT);
-
-
-
+                Role::saveUserRole($user, Role::ROLE_CLIENT);
                 EmailHelper::sendEmail([], $request['email'], 'emails.set_password',"Set Password");
             }
         }
-        /*else {
-            $user = $request->user();
-        }*/
 
-        $paymentMethod = $request->input('payment_method');
-        $course = CourseService::getOne($request->course_id);
-        $tariff = TariffService::getOne($request->tariff_id);
-        $type = $request->type;
+        $product = ProductService::getOne($request->product_id);
 
-        $canBuy = Transaction::canBuy($user->id,$course->id,$type);
-        if(!empty($canBuy['status'])) {
             try {
-                $user->createOrGetStripeCustomer();
-                $user->updateDefaultPaymentMethod($paymentMethod);
-                $user->charge($tariff->price * CommonHelper::STRIPE_HUNDRED, $paymentMethod);
 
-                $transaction = Transaction::saveTransaction($user->id, $course->id, $type, Transaction::SUCCESS, $request->tariff_id, Transaction::TYPE_COURSE, Transaction::STRIPE,$request['message']??'');
+                $payment = new Payment(new Stripe);
+
+                $payment->paying($user,$request);
+
+                $transaction = Transaction::saveTransaction($user->id, Transaction::SUCCESS, $request,$product,  Transaction::STRIPE,Transaction::TYPE_PRODUCT);
 
             } catch (\Exception $exception) {
                 return back()->with('error', $exception->getMessage());
             }
 
-            return redirect(route("thank-you", ["course_id" => $course->id, "tariff_id" => $tariff->id]));
-        }
-        else{
-             return redirect(route("change-tariff", ["course_id" => $course->id, "tariff_id" => $tariff->id,"code"=>$canBuy['code']]));
-        }
+            return redirect(route("thank-you", ["product_id" => $product->id]));
+
 
     }
 
     public function thankyou(Request $request)
     {
-        if (!empty($request->course_id) && $request->tariff_id) {
-            $course = CourseService::getOne($request->course_id);
-            $tariff = TariffService::getOne($request->tariff_id);
+        if (!empty($request->product_id)) {
+            $product = ProductService::getOne($request->product_id);
 
-            if (empty($course) || empty($tariff)) {
+            if (empty($product)) {
                 return response()->view('errors.404', [], 404);
             }
             return view('payments.thankyou', [
-                "course" => $course,
-                "tariff" => $tariff,
-                "type" => $request->type ?? '',
+                "product" => $product,
             ]);
         }
         return response()->view('errors.404', [], 404);
     }
 
-    public function changeTariff(Request $request)
-    {
-        $message = "";
-        if (!empty($request->course_id) && $request->tariff_id) {
-            $course = CourseService::getOne($request->course_id);
-            $tariff = TariffService::getOne($request->tariff_id);
 
-            if (empty($course) || empty($tariff)) {
-                return response()->view('errors.404', [], 404);
-            }
-
-            if($request->code == Transaction::CODE_CANT_EXTEND)
-            {
-                $message = "To extend you need to buy course first";
-            }
-            else if($request->code == Transaction::CODE_CANT_BUY){
-                $message = "You already have this course. You may extend this course if you like";
-            }
-
-            return view('payments.change_tariff', [
-                "course" => $course,
-                "tariff" => $tariff,
-                "message" => $message,
-                "type" => $request->type ?? '',
-                "code" => $request->code ?? '',
-            ]);
-        }
-        return response()->view('errors.404', [], 404);
-    }
 
 }

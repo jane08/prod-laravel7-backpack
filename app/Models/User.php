@@ -54,32 +54,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public static function saveReferral($user_id,$referral_id)
-    {
-        if(!empty($user_id)){
-            $user = UserService::getOne($user_id);
 
-            if(!empty($user))
-            {
-                $referral = new Referral();
-                $referral->user_id = $user_id; // реферер
-                $referral->referral_id = $referral_id;
-                if($referral->save())
-                {
-                    ScoreService::saveScore($user_id,ScoreService::REFERRAL_REGISTRATION);
-
-                    $desc = CommonHelper::replaceWord(Notification::SCORE_WORD,ScoreService::REFERRAL_REGISTRATION_SCORE,Notification::SCORE_DESC);
-                    NotificationService::saveNotification($user_id, Notification::TYPE_SCORE, Notification::SCORE_TITLE,$desc);
-
-                    $referralNew = UserService::getOne($referral_id);
-                    if(!empty($referralNew)) {
-                        $desc = CommonHelper::replaceWord(Notification::USERNAME_WORD, $referralNew->email, Notification::PARTNER_DESC);
-                        NotificationService::saveNotification($user_id, Notification::TYPE_REGISTER, Notification::PARTNER_TITLE, $desc);
-                    }
-                }
-            }
-        }
-    }
 
     public function scopePublished($query)
     {
@@ -108,7 +83,7 @@ class User extends Authenticatable
         return $users;
     }*/
 
-    public static function getUsersIdsByRole($roleName = "student")
+    public static function getUsersIdsByRole($roleName = "client")
     {
         $users = [];
         $role = RoleService::getOne($roleName);

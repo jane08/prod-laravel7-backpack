@@ -23,6 +23,7 @@ use App\Http\Services\GalleryService;
 use App\Http\Services\MenuItemService;
 use App\Http\Services\NewsService;
 use App\Http\Services\PartnerService;
+use App\Http\Services\ProductService;
 use App\Http\Services\ReviewService;
 use App\Http\Services\RoleService;
 use App\Http\Services\UserService;
@@ -54,17 +55,12 @@ class SiteController extends Controller
     public function index()
     {
         $benefits = BenefitService::getAll(Benefit::OLDEST);
-
-      /*  $article = NewsService::getOne(1);
-        $categories = $article->categories;
-        foreach($categories as $category){
-            echo $category->name;
-            die;
-        }*/
+        $products = ProductService::getAll(Benefit::OLDEST);
 
 
         return view('site.index',[
-            'benefits'=>$benefits
+            'benefits'=>$benefits,
+            'products'=>$products
         ]);
     }
 
@@ -73,7 +69,8 @@ class SiteController extends Controller
         $benefits = BenefitService::getAll(Benefit::OLDEST);
 
         return view('site.benefits',[
-            'benefits'=>$benefits
+            'benefits'=>$benefits,
+
         ]);
     }
 

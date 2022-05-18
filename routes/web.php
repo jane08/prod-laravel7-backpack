@@ -28,6 +28,13 @@ Route::group([
 
 
     Route::get('/', [SiteController::class, 'index'])->name("main");
+
+    Route::get('/checkout', [PaymentController::class, 'checkout'])->name("checkout");
+    Route::post('/purchase', [PaymentController::class, 'purchase'])->name("purchase");
+
+    Route::get('/thank-you', [PaymentController::class, 'thankyou'])->name("thank-you");
+
+
     Route::get('{lang?}/contact', [SiteController::class, 'contact'])->name("contact");
     Route::post('send-feedback', [SiteController::class, 'sendFeedback'])->name("send-feedback");
     Route::get('{lang?}/', [SiteController::class, 'index'])->name("main");

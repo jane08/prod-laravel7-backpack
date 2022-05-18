@@ -56,7 +56,7 @@
         <div class="container">
             <div class="checkout_page-wrap">
                 <h1 class="checkout_page-title">Checkout</h1>
-                <form method="POST" action="{{ route('purchase', ["course_id"=>$course->id,"tariff_id"=>$tariff->id,"type"=>$type]) }}" class="card-form card-formss" >
+                <form method="POST" action="{{ route('purchase', ["product_id"=>$product->id]) }}" class="card-form card-formss" >
                     @csrf
                     @if(!empty($errors->all()))
                         <div class="alert alert-danger">
@@ -130,21 +130,18 @@
                     <div class="checkout_result checkout_page-result">
                         <div class="checkout_result__block">
                             <div class="checkout_result__block-img">
-                                <img src="{{asset($course->image)}}" alt="{{$course->alt}}">
+                                <img width="200" height="200" src="{{asset($product->image)}}" alt="{{$product->alt}}">
                             </div>
                             <div class="checkout_result__block-content">
-                                <p class="checkout_result__block-title">{{$course->title}}</p>
-                                <p class="checkout_result__block-price">${{$tariff->price??''}}</p>
+                                <p class="checkout_result__block-title">{{$product->title}}</p>
+                                <p class="checkout_result__block-price">${{$product->price??''}}</p>
                             </div>
                         </div>
                         <div class="checkout_result__info">
-                            <div class="checkout_result__info-item">
-                                <p class="checkout_result__info-name">Rate:</p>
-                                <p class="checkout_result__info-data">{{$tariff->title??''}}</p>
-                            </div>
+
                             <div class="checkout_result__info-item">
                                 <p class="checkout_result__info-name">Total:</p>
-                                <p class="checkout_result__info-data">${{$tariff->price??''}}</p>
+                                <p class="checkout_result__info-data">${{$product->price??''}}</p>
                             </div>
                         </div>
 

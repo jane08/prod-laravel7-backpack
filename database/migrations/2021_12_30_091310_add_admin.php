@@ -39,6 +39,13 @@ class AddAdmin extends Migration
             'model_id' => $user->id,
         ]);
 
+        $role = Role::where('name','client')->first();
+        if(empty($role)) {
+            $role = new Role();
+            $role->name = "client";
+            $role->guard_name = "backpack";
+            $role->save();
+        }
        /* $role = Role::where('name','teacher')->first();
         if(empty($role)) {
             $role = new Role();
