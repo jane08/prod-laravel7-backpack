@@ -22,8 +22,8 @@ class Product extends Model
 
     protected $table = 'products';
 
-    protected $fillable = ['title', 'description', 'image','active','sort','alt','price','category_id','qty'];
-    protected $translatable = ['title', 'description'];
+    protected $fillable = ['title', 'description', 'image','active','sort','alt','price','category_id','qty','meta_title', 'meta_description','meta_keywords','canonical','slug'];
+    protected $translatable = ['title', 'description','meta_title', 'meta_description','meta_keywords'];
 
     protected function asJson($value)
     {
